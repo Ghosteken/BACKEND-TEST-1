@@ -150,12 +150,21 @@ components:
     Task:
       type: object
       properties:
+        _id:
+          type: string
+          description: Unique identifier of the task
         description:
           type: string
           description: Description of the task
         completed:
           type: boolean
           description: Whether the task is completed or not
+        owner:
+          type: string
+          description: ID of the user who owns the task
+      required:
+        - description
+        - owner
     TaskUpdate:
       type: object
       properties:
@@ -187,5 +196,24 @@ components:
           description: Email address of the user
         password:
           type: string
-          description: Password of the user  
-        
+          description: Password of the user
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier of the user
+        name:
+          type: string
+          description: Name of the user
+        email:
+          type: string
+          format: email
+          description: Email address of the user
+        password:
+          type: string
+          description: Password of the user (hashed)
+      required:
+        - name
+        - email
+        - password
