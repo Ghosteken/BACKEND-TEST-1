@@ -1,4 +1,6 @@
-FIRST APPROACH
+Second APPROACH
+
+using nextjs
 
 Start the Server
 Run your server:
