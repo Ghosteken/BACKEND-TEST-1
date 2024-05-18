@@ -1,0 +1,191 @@
+openapi: 3.0.0
+info:
+  title: API DOCUMENTATION
+  description: >
+    This is a v1 Task Manager API application made with Express and documented with Swagger
+  version: 1.0.0
+servers:
+  - url: "http://localhost:8100"
+paths:
+  /test:
+    get:
+      summary: Test endpoint
+      description: Test if task routes are working
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+  /tasks:
+    post:
+      summary: Create a task
+      description: Create a new task
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '201':
+          description: Task created successfully
+        '400':
+          description: Bad request
+    get:
+      summary: Get user tasks
+      description: Get tasks belonging to the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Internal server error
+  /tasks/{id}:
+    get:
+      summary: Get a task by ID
+      description: Get details of a task by its ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the task to get
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Task not found
+        '500':
+          description: Internal server error
+    patch:
+      summary: Update a task by ID
+      description: Update details of a task by its ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the task to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskUpdate'
+      responses:
+        '200':
+          description: Task updated successfully
+        '400':
+          description: Invalid updates
+        '404':
+          description: Task not found
+        '500':
+          description: Internal server error
+    delete:
+      summary: Delete a task by ID
+      description: Delete a task by its ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the task to delete
+      responses:
+        '200':
+          description: Task deleted successfully
+        '404':
+          description: Task not found
+        '500':
+          description: Internal server error
+  /users:
+    get:
+      summary: Test user endpoint
+      description: Test if user routes are working
+      responses:
+        '200':
+          description: OK
+    post:
+      summary: Register a user
+      description: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+      responses:
+        '201':
+          description: User created successfully
+        '400':
+          description: Bad request
+  /users/login:
+    post:
+      summary: User login
+      description: Log in an existing user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Logged in successfully
+        '400':
+          description: Invalid credentials
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Description of the task
+        completed:
+          type: boolean
+          description: Whether the task is completed or not
+    TaskUpdate:
+      type: object
+      properties:
+        description:
+          type: string
+          description: New description of the task
+        completed:
+          type: boolean
+          description: New completion status of the task
+    UserRegister:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the user
+        email:
+          type: string
+          format: email
+          description: Email address of the user
+        password:
+          type: string
+          description: Password of the user
+    UserLogin:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email address of the user
+        password:
+          type: string
+          description: Password of the user  
+        

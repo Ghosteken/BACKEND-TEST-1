@@ -1,23 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Socket.IO Real-Time Data</title>
-  <script src="/socket.io/socket.io.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Real-Time Data</title>
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-  <h1>Real-Time Data Streaming with Socket.IO</h1>
-  <div id="data"></div>
+    <h1>Real-Time Data Streaming with Socket.IO</h1>
+    <div id="data"></div>
 
-  <script>
-    const socket = io();
+    <script>
+        const socket = io();
 
-    socket.on('realTimeData', (data) => {
-      document.getElementById('data').innerText = `Received: ${data.data}`;
-    });
+        socket.on('userRegistered', (user) => {
+            const div = document.createElement('div');
+            div.innerText = `User Registered: ${user.name}`;
+            document.getElementById('data').appendChild(div);
+        });
 
-    socket.emit('exampleEvent', { message: 'Hello, server!' });
-  </script>
+        socket.on('userLoggedIn', (user) => {
+            const div = document.createElement('div');
+            div.innerText = `User Logged In: ${user.name}`;
+            document.getElementById('data').appendChild(div);
+        });
+
+        socket.on('taskCreated', (task) => {
+            const div = document.createElement('div');
+            div.innerText = `Task Created: ${task.description}`;
+            document.getElementById('data').appendChild(div);
+        });
+
+        socket.on('taskUpdated', (task) => {
+            const div = document.createElement('div');
+            div.innerText = `Task Updated: ${task.description}`;
+            document.getElementById('data').appendChild(div);
+        });
+
+        socket.on('taskDeleted', (task) => {
+            const div = document.createElement('div');
+            div.innerText = `Task Deleted: ${task.description}`;
+            document.getElementById('data').appendChild(div);
+        });
+    </script>
 </body>
 </html>

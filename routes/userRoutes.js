@@ -4,50 +4,49 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-router.get('/', (req, res) => {
-    res.send('User routes are working!');
-});
+module.exports = (io) => {
+    router.get('/', (req, res) => {
+        res.send('User routes are working!');
+    });
 
-router.post('/register', async (req, res) => {
-    try {
-    const { name, email, password } = req.body;
+    router.post('/register', async (req, res) => {
+        try {
+            const { name, email, password } = req.body;
 
-        const user = new User({ name, email, password });
-        await user.save();
-        res.status(201).send({ user, message: "User Created Successfully" });
-    }
+            const user = new User({ name, email, password });
+            await user.save();
+            io.emit('userRegistered', user); // Emit event
+            res.status(201).send({ user, message: "User Created Successfully" });
+        } catch (err) {
+            res.status(400).send({ error: err });
+        }
+    });
 
-    catch (err) {
-        res.status(400).send({ error: err });
-    }
+    router.post('/login', async (req, res) => {
+        try {
+            const { email, password } = req.body;
+            const user = await User.findOne({ email });
 
-});
-router.post('/login', async (req, res) => {
-   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+            if (!user) {
+                throw new Error('Unable to login, invalid credentials');
+            }
 
-    if(!user){
-        throw new Error('Unable to login , invalid credentials');
-    }
+            const isMatch = await bcrypt.compare(password, user.password);
 
-    const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                throw new Error('Unable to login, invalid credentials');
+            }
 
-    if(!isMatch){
-        throw new Error('Unable to login , invalid credentials');
-    }
+            const token = jwt.sign({
+                _id: user._id.toString()
+            }, process.env.JWT_SECRET_KEY);
 
-    const token = jwt.sign({
-        _id: user._id.toString()
-    }, process.env.JWT_SECRET_KEY );
+            io.emit('userLoggedIn', user); // Emit event
+            res.send({ user, token, message: "Logged in successfully" });
+        } catch (err) {
+            res.status(400).send({ error: err });
+        }
+    });
 
-    res.send({ user, token , message: "Logged in successfully"});
-   }
-    catch (err) {
-        res.status(400).send({ error: err });
-    }
- });
-
-// register a user
-// login a user
-module.exports = router;
+    return router;
+};
